@@ -17,6 +17,7 @@ book:
   date: today
   chapters:
     - index.qmd
+    - Fish 1N5863.qmd
 
 format:
   html:

@@ -123,20 +123,123 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>N5863 <span class="ot">&lt;-</span> <span class="fu">separate</span>(N5863, dateTime, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">'month'</span>, <span class="st">'day'</span>, <span class="st">'year'</span>, <span class="st">'time'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Expected 4 pieces. Additional pieces discarded in 43476 rows [1, 2, 3, 4, 5, 6,
-7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(N5863)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>N5863 <span class="ot">&lt;-</span> <span class="fu">separate</span>(N5863, dateTime, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">'month'</span>, <span class="st">'day'</span>, <span class="st">'year'</span>, <span class="st">'hour'</span>, <span class="st">'minute'</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(N5863)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  month day year time Temperature..C.
-1     6  23 2021   12           19.51
-2     6  23 2021   12           19.64
-3     6  23 2021   12           19.67
-4     6  23 2021   12           19.64
-5     6  23 2021   12           19.76
-6     6  23 2021   12           19.79</code></pre>
+<pre><code>  month day year hour minute Temperature..C.
+1     6  23 2021   12     00           19.51
+2     6  23 2021   12     04           19.64
+3     6  23 2021   12     08           19.67
+4     6  23 2021   12     12           19.64
+5     6  23 2021   12     16           19.76
+6     6  23 2021   12     20           19.79</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>N5863 <span class="ot">&lt;-</span> <span class="fu">unite</span>(N5863, time, <span class="fu">c</span>(hour, minute))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>N5863 <span class="ot">&lt;-</span> <span class="fu">unite</span>(N5863, date, <span class="fu">c</span>(month, day, year))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>N5863<span class="sc">$</span>time <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[_]"</span>, <span class="st">""</span> , N5863<span class="sc">$</span>time, <span class="at">perl=</span><span class="cn">TRUE</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>N5863<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[_]"</span>, <span class="st">""</span> , N5863<span class="sc">$</span>date, <span class="at">perl=</span><span class="cn">TRUE</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>N5863<span class="sc">$</span>time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(N5863<span class="sc">$</span>time)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>N5863<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(N5863<span class="sc">$</span>date)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(N5863)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     date time Temperature..C.
+1 6232021 1200           19.51
+2 6232021 1204           19.64
+3 6232021 1208           19.67
+4 6232021 1212           19.64
+5 6232021 1216           19.76
+6 6232021 1220           19.79</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Histogram of temperature</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(N5863<span class="sc">$</span>Temperature..C., <span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">30</span>,<span class="dv">1</span>), <span class="at">cex.axis=</span><span class="fl">0.8</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Temperature (C)"</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Boxplot of temperature</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(N5863<span class="sc">$</span>Temperature..C., <span class="at">cex.axis=</span><span class="fl">0.8</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">ylab=</span><span class="st">"Temperature (C)"</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Scatter plot</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Fish-1N5863_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>grn <span class="ot">&lt;-</span> <span class="fu">adjustcolor</span>(<span class="st">"forestgreen"</span>,<span class="fl">0.6</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter.smooth</span>(N5863<span class="sc">$</span>time, N5863<span class="sc">$</span>Temperature..C.,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">30</span>),<span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">2400</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab=</span><span class="st">"Temperature (C)"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab=</span><span class="st">"Time"</span>,<span class="at">pch=</span><span class="dv">21</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">bg=</span>grn)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="fu">glm</span>(Temperature..C.<span class="sc">~</span>time,<span class="at">data=</span>N5863,<span class="at">family=</span>gaussian),<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">lty=</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Fish-1N5863_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>covs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"time"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(N5863[,covs])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Fish-1N5863_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Temperature..C.<span class="sc">~</span>time,<span class="at">data=</span>N5863, <span class="at">family =</span> <span class="st">"gaussian"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mod1,<span class="at">pch=</span><span class="dv">16</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">resid</span>(mod1),<span class="at">breaks=</span><span class="fu">seq</span>(<span class="sc">-</span><span class="dv">60</span>,<span class="dv">60</span>,<span class="dv">5</span>),<span class="at">main=</span><span class="st">""</span>,<span class="at">xlab=</span><span class="st">"Residuals"</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">resid</span>(mod1)<span class="sc">~</span>N5863<span class="sc">$</span>time,<span class="at">pch=</span><span class="dv">16</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab=</span><span class="st">"Residuals"</span>,<span class="at">xlab=</span><span class="st">"Time"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Fish-1N5863_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(AICcmodavg)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fitList <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="st">"m.full"</span> <span class="ot">=</span> <span class="fu">glm</span>(Temperature..C. <span class="sc">~</span> time <span class="sc">+</span> date, <span class="at">data=</span>N5863, <span class="at">family =</span> <span class="st">"gaussian"</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="st">"m.time"</span> <span class="ot">=</span> <span class="fu">glm</span>(Temperature..C. <span class="sc">~</span> time, <span class="at">data=</span>N5863, <span class="at">family =</span> <span class="st">"gaussian"</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">"m.date"</span> <span class="ot">=</span> <span class="fu">glm</span>(Temperature..C. <span class="sc">~</span> date, <span class="at">data=</span>N5863, <span class="at">family =</span> <span class="st">"gaussian"</span>),</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">"m.0"</span> <span class="ot">=</span> <span class="fu">glm</span>(Temperature..C. <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data=</span>N5863, <span class="at">family =</span> <span class="st">"gaussian"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">aictab</span>(fitList)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model selection based on AICc:
+
+       K     AICc Delta_AICc AICcWt Cum.Wt        LL
+m.time 3 200950.5       0.00   0.72   0.72 -100472.2
+m.full 4 200952.4       1.87   0.28   1.00 -100472.2
+m.0    2 201770.5     820.02   0.00   1.00 -100883.3
+m.date 3 201772.5     821.94   0.00   1.00 -100883.2</code></pre>
 </div>
 </div>
 
