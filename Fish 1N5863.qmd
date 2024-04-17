@@ -1,0 +1,85 @@
+---
+title: "Fish 1N5863"
+format: html
+---
+```{r}
+N5863 <- read.csv("1N5863.csv", header=T)
+head(N5863)
+```
+```{r}
+library(tidyverse)
+N5863 <- separate(N5863, dateTime, into = c('month', 'day', 'year', 'hour', 'minute'))
+head(N5863)
+```
+```{r}
+library(tidyr)
+N5863 <- unite(N5863, time, c(hour, minute))
+N5863 <- unite(N5863, date, c(month, day, year))
+N5863$time <- gsub("[_]", "" , N5863$time, perl=TRUE)
+N5863$date <- gsub("[_]", "" , N5863$date, perl=TRUE)
+N5863$time <- as.numeric(N5863$time)
+N5863$date <- as.numeric(N5863$date)
+head(N5863)
+```
+```{r}
+par(mfrow=c(2,2))
+#Histogram of temperature
+hist(N5863$Temperature..C., breaks=seq(10,30,1), cex.axis=0.8,
+     xlab="Temperature (C)", main="")
+
+#Boxplot of temperature
+boxplot(N5863$Temperature..C., cex.axis=0.8,
+ylab="Temperature (C)", main="")
+
+#Scatter plot
+par(mfrow=c(1,1))
+grn <- adjustcolor("forestgreen",0.6)
+scatter.smooth(N5863$time, N5863$Temperature..C.,
+  ylim=c(10,30),xlim=c(0,2400),
+  ylab="Temperature (C)",
+  xlab="Time",pch=21,
+  bg=grn)
+abline(glm(Temperature..C.~time,data=N5863,family=gaussian),lwd=2,lty=2, col=4)
+```
+```{r}
+library(GGally)
+covs <- c("date", "time")
+ggpairs(N5863[,covs])
+```
+
+```{r}
+mod1 <- glm(Temperature..C.~time,data=N5863, family = "gaussian")
+par(mfrow=c(2,3))
+plot(mod1,pch=16)
+hist(resid(mod1),breaks=seq(-60,60,5),main="",xlab="Residuals")
+plot(resid(mod1)~N5863$time,pch=16,
+  ylab="Residuals",xlab="Time")
+```
+```{r}
+library(AICcmodavg)
+
+fitList <- list(
+"m.full" = glm(Temperature..C. ~ time + date, data=N5863, family = "gaussian"),
+"m.time" = glm(Temperature..C. ~ time, data=N5863, family = "gaussian"),
+"m.date" = glm(Temperature..C. ~ date, data=N5863, family = "gaussian"),
+"m.0" = glm(Temperature..C. ~ 1, data=N5863, family = "gaussian")
+)
+
+aictab(fitList)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
